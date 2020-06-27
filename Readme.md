@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
 * Студент: [Mikhail Ten](https://up.htmlacademy.ru/php/12/user/985491).
-* Наставник: `Неизвестно`.
+* Наставник: [Никита Колосов](https://htmlacademy.ru/profile/id1186205).
 
 ---
 
