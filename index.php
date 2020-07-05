@@ -45,17 +45,13 @@ $products = [
     ],
 ];           
 
-function format_price($price){
+function format_price(int $price): string {
     $price = ceil($price);
-    if ($price < 1000) {
-        $price_formatted = $price . ' ₽';
-        return $price_formatted;
-    }
-    else {
-        $price_formatted = number_format($price, $decimals = 0, $dec_point = ".", $thousands_sep = " ");
-        $price_formatted .= ' ₽';
-        return $price_formatted;
-    }    
+    if ($price < 1000) {        
+        return $price . ' ₽';
+    }     
+    
+    return number_format($price, 0, ".", " ") . ' ₽'; 
 }
 ?>
 
