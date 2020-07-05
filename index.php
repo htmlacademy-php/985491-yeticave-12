@@ -44,7 +44,21 @@ $products = [
     'URL_pict' => "img/lot-6.jpg"
     ],
 ];           
+
+function format_price($price){
+    $price = ceil($price);
+    if ($price < 1000) {
+        $price_formatted = $price . ' ₽';
+        return $price_formatted;
+    }
+    else {
+        $price_formatted = number_format($price, $decimals = 0, $dec_point = ".", $thousands_sep = " ");
+        $price_formatted .= ' ₽';
+        return $price_formatted;
+    }    
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -122,7 +136,7 @@ $products = [
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$product['price'] ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?=format_price($product['price']) ?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23
