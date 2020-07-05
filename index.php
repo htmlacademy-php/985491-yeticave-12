@@ -130,7 +130,7 @@ $products = [
                     </div>
                 </div>
             </li>
-        <? endforeach; ?>
+        <?php endforeach; ?>
         </ul>
     </section>
 </main>
@@ -144,7 +144,7 @@ $products = [
             <li class="nav__item">
                 <a href="pages/all-lots.html"><?=$category ?></a>
             </li>
-        <? endforeach; ?>
+        <?php endforeach; ?>
         </ul>
     </nav>
     <div class="main-footer__bottom container">
