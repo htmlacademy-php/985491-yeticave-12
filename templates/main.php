@@ -29,8 +29,9 @@
                             <span class="lot__amount">Стартовая цена</span>
                             <span class="lot__cost"><?=htmlspecialchars(format_price($product['price'])) ?></span>
                         </div>
-                        <div class="lot__timer timer">
-                            12:23
+                        <?php $hours_and_minuts = get_dt_range(htmlspecialchars($product['date_end']));?>
+                        <div class="lot__timer timer <?php if($hours_and_minuts[0] < 1): ?>timer--finishing<?php endif; ?>">
+                             <?=$hours_and_minuts[0] . ':' . $hours_and_minuts[1];?>
                         </div>
                     </div>
                 </div>
