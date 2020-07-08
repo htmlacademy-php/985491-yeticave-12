@@ -1,4 +1,3 @@
-<?php date_default_timezone_set('Asia/Yekaterinburg');
-
- ?> 
+<?php 
+date_default_timezone_set('Asia/Yekaterinburg');
 
