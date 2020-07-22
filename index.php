@@ -3,6 +3,24 @@ require('config.php');
 $is_auth = rand(0, 1);
 
 $user_name = 'Mikhail'; // укажите здесь ваше имя
+
+$con = mysqli_connect("localhost", "mysql", "mysql", "yeticave");
+if ($con == false) {
+    print("Ошибка подключения: " . mysqli_connect_error());
+}
+else {
+    print("Соединение установлено");
+    mysqli_set_charset($con, "utf8");
+}
+$sql_1 = "SELECT lots.name, start_price, url_image, date_end, categories.name AS name_category FROM lots JOIN categories 
+ON lots.category = categories.id WHERE lots.winner IS NULL ORDER BY date_create DESC";
+$result_products = mysqli_query($con, $sql_1);
+$rows_products = mysqli_fetch_all($result_products, MYSQLI_ASSOC);
+
+$sql_2 = "SELECT * FROM categories";
+$result_categories = mysqli_query($con, $sql_2);
+$rows_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+
 ?>
 <?php
 $categories = ["Доски и лыжи", "Крепления", "Ботинки", "Одежда", "Инструменты", "Разное"];
@@ -77,8 +95,8 @@ function get_dt_range(string $date_end): array {
 
 require('helpers.php');
 
-$content_page = include_template('main.php', $data = ['products' => $products, 'categories' => $categories]);
-$page = include_template('layout.php', $data = ['products' => $products, 'categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Главная', 'user_name' => $user_name, 'is_auth' => $is_auth]);
+$content_page = include_template('main.php', $data = ['rows_products' => $rows_products, 'rows_categories' => $rows_categories]);
+$page = include_template('layout.php', $data = ['rows_categories' => $rows_categories, 'content_page' => $content_page, 'name_page' => 'Главная', 'user_name' => $user_name, 'is_auth' => $is_auth]);
 print($page);
 ?>
 
