@@ -59,7 +59,7 @@ CREATE INDEX email_index ON users(email);
 
 ALTER TABLE lots ADD FOREIGN KEY (author)  REFERENCES users (id);
 ALTER TABLE lots ADD FOREIGN KEY (winner)  REFERENCES users (id);
-ALTER TABLE lots ADD FOREIGN KEY (category)  REFERENCES users (id);
+ALTER TABLE lots ADD FOREIGN KEY (category)  REFERENCES categories (id);
 ALTER TABLE bets ADD FOREIGN KEY (user)  REFERENCES users (id);
 ALTER TABLE bets ADD FOREIGN KEY (lot)  REFERENCES lots (id);
 
