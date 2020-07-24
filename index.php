@@ -8,10 +8,9 @@ $connect = mysqli_connect("localhost", "mysql", "mysql", "yeticave");
 if ($connect == false) {
     exit("Ошибка подключения: " . mysqli_connect_error());
 }
-else {
-    print("Соединение установлено");
-    mysqli_set_charset($connect, "utf8");
-}
+
+mysqli_set_charset($connect, "utf8");
+
 $sql_read_open_lots = "SELECT lots.name, start_price AS price, url_image AS URL_pict, date_end, categories.name AS category FROM lots JOIN categories 
 ON lots.category = categories.id WHERE lots.winner IS NULL ORDER BY date_create DESC";
 $result_open_lots = mysqli_query($connect, $sql_read_open_lots);
