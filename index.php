@@ -11,7 +11,7 @@ if ($connect == false) {
 
 mysqli_set_charset($connect, "utf8");
 
-$sql_read_open_lots = "SELECT lots.name, start_price AS price, url_image AS URL_pict, date_end, categories.name AS category FROM lots JOIN categories 
+$sql_read_open_lots = "SELECT lots.id, lots.name, start_price AS price, url_image AS URL_pict, date_end, categories.name AS category FROM lots JOIN categories 
 ON lots.category = categories.id WHERE lots.winner IS NULL ORDER BY date_create DESC";
 $result_open_lots = mysqli_query($connect, $sql_read_open_lots);
 $products = mysqli_fetch_all($result_open_lots, MYSQLI_ASSOC);
@@ -46,7 +46,7 @@ function get_dt_range(string $date_end): array {
     return $end_time;    
 }
 
-require('helpers.php');
+
 
 $content_page = include_template('main.php', $data = ['products' => $products, 'categories' => $categories]);
 $page = include_template('layout.php', $data = ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Главная', 'user_name' => $user_name, 'is_auth' => $is_auth]);
