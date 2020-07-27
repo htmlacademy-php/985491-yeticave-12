@@ -1,15 +1,6 @@
 <?php
-require('config.php');
-$is_auth = rand(0, 1);
+require_once('config.php');
 
-$user_name = 'Mikhail'; // укажите здесь ваше имя
-
-$connect = mysqli_connect("localhost", "mysql", "mysql", "yeticave");
-if ($connect == false) {
-    exit("Ошибка подключения: " . mysqli_connect_error());
-}
-
-mysqli_set_charset($connect, "utf8");
 
 $sql_read_open_lots = "SELECT lots.id, lots.name, start_price AS price, url_image AS URL_pict, date_end, categories.name AS category FROM lots JOIN categories 
 ON lots.category = categories.id WHERE lots.winner IS NULL ORDER BY date_create DESC";
