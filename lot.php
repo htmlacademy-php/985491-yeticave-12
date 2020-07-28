@@ -27,8 +27,7 @@ function get_dt_range(string $date_end): array {
 }
 
 if (isset($_GET['id'])) {
-  $id = $_GET['id'];
-  settype($id, 'integer');
+  $id = (int) $_GET['id'];  
 }
 else {
   http_response_code(404);
@@ -41,7 +40,7 @@ $result_lot = mysqli_query($connect, $sql_read_lot);
 
 $open_lot = mysqli_fetch_array($result_lot, MYSQLI_ASSOC);
 
-if ($open_lot==NULL) {
+if ($open_lot===NULL) {
   http_response_code(404);
   exit("Страница с id =" . $id . " не найдена.");
 }
