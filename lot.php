@@ -1,30 +1,6 @@
 <?php
 require_once('config.php');
-
-
-
-function format_price(int $price): string {
-    $price = ceil($price);
-    if ($price < 1000) {        
-        return $price . ' ₽';
-    }     
-    
-    return number_format($price, 0, ".", " ") . ' ₽'; 
-}
-
-function get_dt_range(string $date_end): array {
-    $diff = strtotime($date_end) - strtotime("now");
-    $end_time = [floor($diff/3600), floor(($diff % 3600)/60)];
-
-    if ($end_time[0] <10) {
-        $end_time[0] = '0' . $end_time[0];
-    }
-    if ($end_time[1] <10) {
-        $end_time[1] = '0' . $end_time[1];
-    }
-
-    return $end_time;    
-}
+require_once('user_function.php');
 
 if (isset($_GET['id'])) {
   $id = (int) $_GET['id'];  
