@@ -26,8 +26,8 @@ $result_categories = mysqli_query($connect, $sql_read_categories);
 $categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
 
-$content_page = include_template('content_lot.php', $data = ['open_lot' => $open_lot, 'categories' => $categories, 'bet_open_lot' => $bet_open_lot]);
-$page = include_template('layout.php', $data = ['categories' => $categories, 'content_page' => $content_page, 'name_page' => htmlspecialchars($open_lot['name']) , 'user_name' => $user_name, 'is_auth' => $is_auth]);
+$content_page = include_template('content_lot.php', ['open_lot' => $open_lot, 'categories' => $categories, 'bet_open_lot' => $bet_open_lot]);
+$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => htmlspecialchars($open_lot['name']) , 'user_name' => $user_name, 'is_auth' => $is_auth]);
 print($page);
 
 ?>

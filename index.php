@@ -12,8 +12,8 @@ $result_categories = mysqli_query($connect, $sql_read_categories);
 $categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
 
-$content_page = include_template('main.php', $data = ['products' => $products, 'categories' => $categories]);
-$page = include_template('layout.php', $data = ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Главная', 'user_name' => $user_name, 'is_auth' => $is_auth]);
+$content_page = include_template('main.php', ['products' => $products, 'categories' => $categories]);
+$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Главная', 'user_name' => $user_name, 'is_auth' => $is_auth]);
 print($page);
 ?>
 

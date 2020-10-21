@@ -25,9 +25,17 @@ function get_post_val(string $name): string {
     return $_POST[$name] ?? "";
 }
 
-function validation_format_date(string $date): bool {
-  $format_date = date_create_from_format('Y-m-d', $date);
-   return $format_date !== false;
+function get_filtered_post_val(string $name): string {
+    return htmlspecialchars($_POST[$name]) ?? "";
+}
+
+function validation_format_date(string $date): ?string {  	
+   	if (date_create_from_format('Y-m-d', $date) === false) {
+   		return 'Дата должна быть введена в формате "ГГГГ-ММ_ДД"';
+   	}
+   	else {   	
+   		return NULL;
+   	}
 } 
 
 //здесь не указан тип возвращаемого значения т.к. при указании string выдает ошибку, я так понимаю что когда ошибки нет он возвращает NULL
@@ -41,91 +49,22 @@ function validate_filled(string $name): ?string {
 }
 
 //здесь не указан тип возвращаемого значения т.к. при указании string выдает ошибку, я так понимаю что когда ошибки нет он возвращает NULL
-function validate_file(string $name): string {     
+function validate_file(string $name, string $name_folder_uploads_file): ?string {     
   if (isset($_FILES[$name]) && !empty($_FILES[$name]['name'])) {
     $file_name = $_FILES[$name]['name'];
-    $file_path = __DIR__ . '/uploads/';
-    $file_url = '/uploads/' . $file_name;     
+    $file_path = __DIR__ . $name_folder_uploads_file;
+    $file_url = $name_folder_uploads_file . $file_name;     
     
     $type_file = mime_content_type($file_path . $file_name);
     if (!($type_file === 'image/jpeg' || $type_file === 'image/png' || $type_file === 'image/jpg')) { 
       return 'Допустимы только файлы изображений типов jpeg, jpg и png ';  
-    }     
-    
-    if (move_uploaded_file($_FILES[$name]['tmp_name'], $file_path . $file_name)) {
-      return (string)$file_url;      
-    }
+    }   
     else {
-      return 'Ошибка при перемещении файла ';
-    }                 
+    	return NULL;
+    }                          
   }           
   else { 
     return 'Поле не заполнено '; 
   }  
 }
 
-$rules = [
-  'lot-name' => function(): ?string {          
-      return validate_filled('lot-name');
-  },
-  'category' => function(array $categories): ?string {
-      $error = validate_filled('category');
-      if ($error) {
-        return $error;
-      }                        
-      
-      $category_exists = 0;      
-      foreach ($categories as $item_category) { //проверяется, что введенная категория существует
-        if ($item_category['name'] === $_POST['category']) {
-          $category_exists = 1;
-        }
-      }
-      if ($_POST['category'] === 'Выберите категорию') {
-        return 'Не выбрана категория';
-      }
-      if ($category_exists === 0) {
-        return 'Выбрана несуществующая категория';
-      }  
-      return NULL;            
-  },
-  'message' => function(): ?string {           
-      return validate_filled('message');      
-  },
-  'lot-rate' => function(): ?string {         
-      $error = validate_filled('lot-rate');
-      if ($error) {
-        return $error;
-      }         
-      if ($_POST['lot-rate'] <= 0) {
-        return 'Начальная цена должна быть числом больше нуля';
-      }
-      return NULL;
-  },
-  'lot-step' => function(): ?string {
-      $error = validate_filled('lot-step');
-      if ($error) {
-        return $error;
-      }           
-
-      if (!ctype_digit ($_POST['lot-step']) || $_POST['lot-step'] <= 0) {
-        return 'Шаг ставки должен быть целым числом больше нуля';
-      }   
-      return NULL;   
-  },
-  'lot-date' => function(): ?string {
-      $error = validate_filled('lot-date');
-      if ($error) {
-        return $error;
-      }           
-      
-      if (!validation_format_date($_POST['lot-date'])) {
-        return 'Дата должна быть введена в формате "ГГГГ-ММ_ДД"';
-      }
-
-      $hours_and_minuts_2 = get_dt_range($_POST['lot-date']); //получение массива с часами и минутами разницы времени между введенной датой окончания торгов и текущей датой
-      if ($hours_and_minuts_2[0] < 24) {  //В "0" элементе хранятся часы, если меньше 24 часов, значит менее суток
-        return 'Дата окончания торгов должна быть позже текущего времени минимум на 24 часа'; 
-      }     
-      return NULL;       
-  }
-];
