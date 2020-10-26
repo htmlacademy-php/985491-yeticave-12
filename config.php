@@ -5,8 +5,8 @@ $is_auth = rand(0, 1);
 
 $user_name = 'Mikhail'; // укажите здесь ваше имя
 
-$name_folder_uploads_file = '/uploads/';  // Папка с загруженными файлами
-$file_path = __DIR__ . $name_folder_uploads_file;  // Относительный путь к папке с загруженными файлами
+define('NAME_FOLDER_UPLOADS_FILE', '/uploads/');  // Папка с загруженными файлами
+define('FILE_PATH', __DIR__ . NAME_FOLDER_UPLOADS_FILE);	// Относительный путь к папке с загруженными файлами
 
 $connect = mysqli_connect("localhost", "mysql", "mysql", "yeticave");
 if ($connect == false) {

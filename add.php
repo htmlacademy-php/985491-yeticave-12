@@ -10,20 +10,16 @@ $rules = [
   'lot-name' => function(): ?string {          
       return validate_filled('lot-name');
   },
-  'category' => function() use ($categories): ?string {
-      $error = validate_filled('category');
-      if ($error) {
-        return $error;
-      }                        
+  'category' => function() use ($categories): ?string {         
+      if (empty($_POST['category'])) {
+        return 'Не выбрана категория';
+      }   
       
       $category_exists = false;      
       foreach ($categories as $item_category) { //проверяется, что введенная категория существует
-        if ($item_category['name'] === $_POST['category']) {
+        if ($item_category['id'] === $_POST['category']) {
           $category_exists = true;
         }
-      }
-      if ($_POST['category'] === 'Выберите категорию') {
-        return 'Не выбрана категория';
       }
       if (!$category_exists) {
         return 'Выбрана несуществующая категория';
@@ -63,10 +59,8 @@ $rules = [
       if (validation_format_date($_POST['lot-date'])) {
         return 'Дата должна быть введена в формате "ГГГГ-ММ-ДД"';
       }
-
-      $time_before_end_lot = strtotime($_POST['lot-date']) - time();
-      $time_before_end_lot = floor($time_before_end_lot/3600);  // Переводим в часы
-      if ($time_before_end_lot < 24 ) {  
+      
+      if (strtotime($_POST['lot-date']) < (time() + 86400)) {  
         return 'Дата окончания торгов должна быть позже текущего времени минимум на 24 часа'; 
       }     
       return NULL;       
@@ -76,21 +70,15 @@ $rules = [
 $added_lot = [];
 $errors_validate = [];
 
-$name_category_safe = mysqli_real_escape_string($connect, get_post_val('category'));
-$sql_read_id_category = "SELECT id FROM categories WHERE name ='" . $name_category_safe ."'";
-$result_id = mysqli_query($connect, $sql_read_id_category);
-$id_select_category = mysqli_fetch_array($result_id, MYSQLI_ASSOC);
-
-if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена  
-  $added_lot['category'] = $id_select_category['id'];
+if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена    
   $added_lot['author'] = 1;  
   $added_lot['date_create'] = date('Y-m-d H:i:s');
 
   //Валидация файла
-  $errors_validate['file_img_lot'] = validate_file('file_img_lot', $name_folder_uploads_file);
+  $errors_validate['file_img_lot'] = validate_file('file_img_lot', '/uploads/');  
   if ($errors_validate['file_img_lot'] === NULL) {
-    if (move_uploaded_file($_FILES['file_img_lot']['tmp_name'], $file_path . $_FILES['file_img_lot']['name'])) {
-      $added_lot['file_img_lot'] = $name_folder_uploads_file . $_FILES['file_img_lot']['name'];
+    if (move_uploaded_file($_FILES['file_img_lot']['tmp_name'], FILE_PATH . $_FILES['file_img_lot']['name'])) {
+      $added_lot['file_img_lot'] = NAME_FOLDER_UPLOADS_FILE . $_FILES['file_img_lot']['name'];
     }
     else {
       $errors_validate['file_img_lot'] = 'Ошибка при перемещении файла ';
@@ -101,7 +89,7 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
   foreach ($_POST as $key => $value) {    
     if (isset($rules[$key])) {           
         $rule = $rules[$key];
-        $errors_validate[$key] = $rule();        
+        $errors_validate[$key] = $rule();               
     }
   } 
   $errors_validate = array_filter($errors_validate);  //убираем пустые значения в массиве
@@ -118,7 +106,7 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
     
     $stmt = mysqli_prepare($connect, $sql_insert_lot);
-    mysqli_stmt_bind_param($stmt, 'sssssssii', $added_lot['date_create'], get_post_val('lot-name'), get_post_val('message'), $added_lot['file_img_lot'], get_post_val('lot-rate'), get_post_val('lot-date'), get_post_val('lot-step'), $added_lot['author'], $added_lot['category']);
+    mysqli_stmt_bind_param($stmt, 'sssssssii', $added_lot['date_create'], get_post_val('lot-name'), get_post_val('message'), $added_lot['file_img_lot'], get_post_val('lot-rate'), get_post_val('lot-date'), get_post_val('lot-step'), $added_lot['author'], get_post_val('category'));
     
     if (!mysqli_stmt_execute($stmt)) { 
       $error = mysqli_error($connect); 
