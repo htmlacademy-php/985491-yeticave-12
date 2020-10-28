@@ -1,30 +1,6 @@
 <?php
 require_once('config.php');
-
-
-
-function format_price(int $price): string {
-    $price = ceil($price);
-    if ($price < 1000) {        
-        return $price . ' ₽';
-    }     
-    
-    return number_format($price, 0, ".", " ") . ' ₽'; 
-}
-
-function get_dt_range(string $date_end): array {
-    $diff = strtotime($date_end) - strtotime("now");
-    $end_time = [floor($diff/3600), floor(($diff % 3600)/60)];
-
-    if ($end_time[0] <10) {
-        $end_time[0] = '0' . $end_time[0];
-    }
-    if ($end_time[1] <10) {
-        $end_time[1] = '0' . $end_time[1];
-    }
-
-    return $end_time;    
-}
+require_once('user_function.php');
 
 if (isset($_GET['id'])) {
   $id = (int) $_GET['id'];  
@@ -50,8 +26,8 @@ $result_categories = mysqli_query($connect, $sql_read_categories);
 $categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
 
 
-$content_page = include_template('content_lot.php', $data = ['open_lot' => $open_lot, 'categories' => $categories, 'bet_open_lot' => $bet_open_lot]);
-$page = include_template('layout.php', $data = ['categories' => $categories, 'content_page' => $content_page, 'name_page' => htmlspecialchars($open_lot['name']) , 'user_name' => $user_name, 'is_auth' => $is_auth]);
+$content_page = include_template('content_lot.php', ['open_lot' => $open_lot, 'categories' => $categories, 'bet_open_lot' => $bet_open_lot]);
+$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => htmlspecialchars($open_lot['name']) , 'user_name' => $user_name, 'is_auth' => $is_auth]);
 print($page);
 
 ?>
