@@ -33,9 +33,8 @@ function validation_format_date(string $date): ?string {
    	if (date_create_from_format('Y-m-d', $date) === false) {
    		return 'Дата должна быть введена в формате "ГГГГ-ММ_ДД"';
    	}
-   	else {   	
-   		return NULL;
-   	}
+   		
+   	return NULL;   	
 } 
 
 //здесь не указан тип возвращаемого значения т.к. при указании string выдает ошибку, я так понимаю что когда ошибки нет он возвращает NULL
@@ -43,9 +42,8 @@ function validate_filled(string $name): ?string {
     if (empty($_POST[$name])) {
         return 'Поле не заполнено ';
     }
-    else{
-    	return NULL;
-    }
+    
+    return NULL;    
 }
 
 //здесь не указан тип возвращаемого значения т.к. при указании string выдает ошибку, я так понимаю что когда ошибки нет он возвращает NULL
@@ -58,12 +56,10 @@ function validate_file(string $name, string $name_folder_uploads_file): ?string 
     if ($type_file === 'image/jpeg' || $type_file === 'image/png' || $type_file === 'image/jpg') { 
       	return NULL;
     }   
-    else {
-    	return 'Допустимы только файлы изображений типов jpeg, jpg и png ';  
-    }                          
+    
+    return 'Допустимы только файлы изображений типов jpeg, jpg и png ';                              
   }           
-  else { 
-    return 'Поле не заполнено '; 
-  }  
+  
+  return 'Поле не заполнено ';   
 }
 
