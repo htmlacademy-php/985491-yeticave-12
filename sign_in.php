@@ -82,8 +82,7 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
       $error = mysqli_error($connect); 
       exit("Ошибка MySQL: " . $error);
     }
-
-    session_start();
+    
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_name'] = $user['name'];
     

@@ -57,13 +57,14 @@
           <div class="history">
             <h3>История ставок (<span><?=count($bet_open_lot) ?></span>)</h3>
             <table class="history__list">
-              <?php foreach ($bet_open_lot as $bet): ?>
+              <?php if (count($bet_open_lot)) {                  
+              foreach ($bet_open_lot as $bet): ?>
                 <tr class="history__item">
                   <td class="history__name"><?=htmlspecialchars($bet['name']) ?></td>
                   <td class="history__price"><?=htmlspecialchars(format_price($bet['price'])) ?></td>                  
                   <td class="history__time"><?=get_dt_range_back($bet['date_create']) ?></td>
                 </tr>                                        
-              <?php endforeach; ?>                
+              <?php endforeach;} ?>                
             </table>
           </div>           
         </div>
