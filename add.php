@@ -70,6 +70,11 @@ $rules = [
 $added_lot = [];
 $errors_validate = [];
 
+if (!isset($_SESSION['user_id'])) {
+  http_response_code(403);
+  exit("Для добавления лота необходимо зарегистрироваться на сайте.");
+}
+
 if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена    
   $added_lot['author'] = 1;  
   $added_lot['date_create'] = date('Y-m-d H:i:s');
