@@ -57,6 +57,8 @@ CREATE INDEX name_lot ON lots(name);
 CREATE INDEX date_end ON lots(date_end);
 CREATE INDEX email_index ON users(email);
 
+CREATE FULLTEXT INDEX yeticave_ft_search_lot ON lots(name, description);
+
 ALTER TABLE lots ADD FOREIGN KEY (author)  REFERENCES users (id);
 ALTER TABLE lots ADD FOREIGN KEY (winner)  REFERENCES users (id);
 ALTER TABLE lots ADD FOREIGN KEY (category)  REFERENCES categories (id);

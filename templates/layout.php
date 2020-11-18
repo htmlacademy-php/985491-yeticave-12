@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title><?=$name_page; ?></title>
+    <title><?=htmlspecialchars($name_page); ?></title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
     <link href="../css/flatpickr.min.css" rel="stylesheet">
@@ -16,8 +16,9 @@
         <a class="main-header__logo" href="index.php">
             <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
-        <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru" autocomplete="off">
-            <input type="search" name="search" placeholder="Поиск лота">
+        <form class="main-header__search" method="get" action="search.php" autocomplete="off">
+            <input type="hidden" name="page" value="1">
+            <input type="search" name="search" placeholder="Поиск лота"  value="<?=get_filtered_get_val('search'); ?>">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
         <a class="main-header__add-lot button" href="add.php">Добавить лот</a>

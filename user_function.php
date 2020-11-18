@@ -29,6 +29,10 @@ function get_filtered_post_val(string $name): string {
     return htmlspecialchars(get_post_val($name)) ?? "";
 }
 
+function get_filtered_get_val(string $name): string {
+    return htmlspecialchars($_GET[$name]) ?? "";
+}
+
 function validation_format_date(string $date): ?string {  	
    	if (date_create_from_format('Y-m-d', $date) === false) {
    		return 'Дата должна быть введена в формате "ГГГГ-ММ_ДД"';
@@ -40,6 +44,14 @@ function validation_format_date(string $date): ?string {
 //здесь не указан тип возвращаемого значения т.к. при указании string выдает ошибку, я так понимаю что когда ошибки нет он возвращает NULL
 function validate_filled(string $name): ?string { 
     if (empty($_POST[$name])) {
+        return 'Поле не заполнено ';
+    }
+    
+    return NULL;    
+}
+
+function validate_filled_GET(string $name): ?string { 
+    if (empty($_GET[$name])) {
         return 'Поле не заполнено ';
     }
     
