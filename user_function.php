@@ -75,3 +75,8 @@ function validate_file(string $name, string $name_folder_uploads_file): ?string 
   return 'Поле не заполнено ';   
 }
 
+function get_timer_value(string $name): string {
+	$hours_and_minuts = get_dt_range($name);	
+
+    return implode(':', $hours_and_minuts) ?? "";
+}
