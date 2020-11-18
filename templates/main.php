@@ -32,7 +32,7 @@
                         </div>
                         <?php $hours_and_minuts = get_dt_range($product['date_end']);?>
                         <div class="lot__timer timer <?php if($hours_and_minuts[0] < 1): ?>timer--finishing<?php endif; ?>">
-                             <?=get_timer_value($product['date_end']);?>
+                             <?=get_timer_value($hours_and_minuts);?>  
                         </div>
                     </div>
                 </div>
