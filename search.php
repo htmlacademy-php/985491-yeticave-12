@@ -9,7 +9,8 @@ $rules = [
 ];
 
 $errors_validate = [];
-$number_lots_on_page = 9;
+define('DEFAULT_LOTS_ON_PAGE', 9);
+$number_lots_on_page = DEFAULT_LOTS_ON_PAGE;  //Вынужден был оставить переменную, т.к. функция mysqli_stmt_bind_param принимает только переменные, Fatal error иначе выдает
 
 if (isset($_GET['find'])) {  //Если есть такое поле в GET, значит форма отправлена      
   
@@ -47,8 +48,8 @@ if (isset($_GET['find'])) {  //Если есть такое поле в GET, з�
     }
 
     //Рассчет параметров для выборки лотов
-    $offset = ((int)$active_page - 1) * $number_lots_on_page;
-    $number_page = (int)ceil($number_lots_searched / $number_lots_on_page);        
+    $offset = ((int)$active_page - 1) * DEFAULT_LOTS_ON_PAGE;
+    $number_page = (int)ceil($number_lots_searched / DEFAULT_LOTS_ON_PAGE);          
 
     //Получение всех данных лотов найденных поиском, но только ограниченной выборки
     $sql_search_lots = "SELECT lots.id, lots.date_create, lots.name, lots.description, lots.url_image, lots.start_price, lots.date_end, lots.step_price, categories.name AS name_category FROM lots JOIN categories ON lots.category = categories.id WHERE (MATCH(lots.name, lots.description) AGAINST(?)) AND (lots.date_end > NOW()) ORDER BY lots.date_create DESC LIMIT ? OFFSET ?";          
@@ -63,14 +64,14 @@ if (isset($_GET['find'])) {  //Если есть такое поле в GET, з�
       exit("Ошибка MySQL: " . $error);
     }             
         
-    $content_page = include_template('search_templates.php', ['categories' => $categories, 'errors_validate' => $errors_validate, 'results_search' => $results_search, 'number_lots_on_page' => $number_lots_on_page, 'number_lots_searched' => $number_lots_searched, 'number_page' => $number_page, 'active_page' => $active_page]);
+    $content_page = include_template('search_templates.php', ['categories' => $categories, 'errors_validate' => $errors_validate, 'results_search' => $results_search, 'number_lots_on_page' => DEFAULT_LOTS_ON_PAGE, 'number_lots_searched' => $number_lots_searched, 'number_page' => $number_page, 'active_page' => $active_page]);
     $page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Результаты поиска']);
     print($page);
     
   }
 }
 else {  //Если форма не отправлена, показываем страницу результатов без результатов
-  $content_page = include_template('search_templates.php', ['categories' => $categories, 'errors_validate' => $errors_validate, 'results_search' => $results_search, 'number_lots_on_page' => $number_lots_on_page, 'number_lots_searched' => $number_lots_searched, 'number_page' => $number_page, 'active_page' => $active_page]);
+  $content_page = include_template('search_templates.php', ['categories' => $categories, 'errors_validate' => $errors_validate, 'results_search' => $results_search, 'number_lots_on_page' => DEFAULT_LOTS_ON_PAGE, 'number_lots_searched' => $number_lots_searched, 'number_page' => $number_page, 'active_page' => $active_page]);
   $page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Результаты поиска']);
   print($page);
 }

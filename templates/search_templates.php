@@ -25,9 +25,10 @@
                   <div class="lot__rate">
                     <span class="lot__amount">Стартовая цена</span>
                     <span class="lot__cost"><?=htmlspecialchars(format_price($result_search['start_price'])) ?></span>
-                  </div>                  
-                  <div class="lot__timer timer">                  
-                    <?=get_timer_value($result_search['date_end']);?>                  
+                  </div>    
+                  <?php $hours_and_minuts = get_dt_range($result_search['date_end']);?>              
+                  <div class="lot__timer timer <?php if($hours_and_minuts[0] < 1): ?>timer--finishing<?php endif; ?>">                  
+                    <?=get_timer_value($hours_and_minuts);?>                  
                   </div>
                 </div>
               </div>
@@ -35,10 +36,15 @@
           <?php endforeach; ?>           
         </ul>
       </section>
-      <?php          
-        $url_page = 'search.php?search=' . get_filtered_get_val('search') . '&find=' . get_filtered_get_val('find');        
+      <?php                  
         $previous = (int)$active_page -1;         
-        $next = (int)$active_page + 1;
+        $next = (int)$active_page + 1;        
+
+        $parametrs_query['search'] = get_filtered_get_val('search');
+        $parametrs_query['find'] = get_filtered_get_val('find');        
+        
+        $query = http_build_query($parametrs_query);
+        $url_page = 'search.php?' . $query;        
       ?>
       <?php if($number_lots_searched > $number_lots_on_page): ?> 
       <ul class="pagination-list">         
