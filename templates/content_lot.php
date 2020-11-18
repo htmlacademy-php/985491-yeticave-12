@@ -26,12 +26,8 @@
           
           <div class="lot-item__state">
             <?php $hours_and_minuts = get_dt_range($open_lot['date_end']);?>
-            <div class="lot-item__timer timer">              
-              <?php if ((int)$hours_and_minuts[1] > 0 || (int)$hours_and_minuts[0] > 0) : ?>
-                <?=implode(':', $hours_and_minuts);?>
-              <?php else: ?>
-                00:00
-              <?php endif; ?>
+            <div class="lot-item__timer timer <?php if($hours_and_minuts[0] < 1): ?>timer--finishing<?php endif; ?>">              
+              <?=get_timer_value($hours_and_minuts);?>
             </div>
             <div class="lot-item__cost-state">
               <div class="lot-item__rate">
