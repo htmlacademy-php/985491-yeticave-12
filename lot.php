@@ -37,13 +37,8 @@ if ($open_lot===NULL) {
   exit("Страница с id =" . $id . " не найдена.");
 }
 
-$sql_read_categories = "SELECT * FROM categories";
-$result_categories = mysqli_query($connect, $sql_read_categories);
-$categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
-
-
 $content_page = include_template('content_lot.php', ['open_lot' => $open_lot, 'categories' => $categories, 'bet_open_lot' => $bet_open_lot]);
-$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => htmlspecialchars($open_lot['name']) , 'user_name' => $user_name, 'is_auth' => $is_auth]);
+$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => $open_lot['name']]);
 print($page);
 
 ?>

@@ -2,10 +2,6 @@
 require_once('config.php');
 require_once('user_function.php');
 
-$sql_read_categories = "SELECT * FROM categories";
-$result_categories = mysqli_query($connect, $sql_read_categories);
-$categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
-
 $rules = [
   'email' => function() use ($connect): ?string {                
       $error = validate_filled('email');
