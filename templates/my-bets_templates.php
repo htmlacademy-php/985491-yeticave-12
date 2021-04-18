@@ -29,6 +29,7 @@
               $text_timer = get_timer_value($hours_and_minuts_with_seconds);              
             } 
             else {
+              $class_timer = "";
               $text_timer = get_timer_value($hours_and_minuts_with_seconds);
             }                       
             ?>
@@ -38,7 +39,12 @@
               <div class="rates__img">
                 <img src="<?=$lot_with_my_bet['url_image'] ?>" width="54" height="40" alt="Сноуборд">
               </div>
+              <div>
               <h3 class="rates__title"><a href="/lot.php?id=<?=$lot_with_my_bet['lot_id'] ?>"><?=htmlspecialchars($lot_with_my_bet['name']) ?></a></h3>
+
+              
+              <?php if ($text_timer == "Ставка выиграла" || $text_timer == "Торги окончены") : ?> <p> <?=htmlspecialchars($lot_with_my_bet['contact']) ?> </p><?php endif; ?>
+              </div>
             </td>
             <td class="rates__category">
               <?=htmlspecialchars($lot_with_my_bet['name_category']) ?>

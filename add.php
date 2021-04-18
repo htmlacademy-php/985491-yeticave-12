@@ -72,7 +72,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена    
-  $added_lot['author'] = 1;  
+  $added_lot['author'] = $_SESSION['user_id'];  
   $added_lot['date_create'] = date('Y-m-d H:i:s');
 
   //Валидация файла
