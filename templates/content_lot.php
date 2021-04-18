@@ -1,5 +1,4 @@
 
-
   <main>
     <nav class="nav">
       <ul class="nav__list container">
@@ -32,21 +31,21 @@
             <div class="lot-item__cost-state">
               <div class="lot-item__rate">
                 <span class="lot-item__amount">Текущая цена</span>
-                <span class="lot-item__cost"><?=htmlspecialchars(format_price($open_lot['start_price'])) ?></span>
+                <span class="lot-item__cost"><?=htmlspecialchars(format_price($current_price)) ?></span>
               </div>
               <div class="lot-item__min-cost">
-                <?php $new_bet = format_price((int)$open_lot['start_price'] + (int)$open_lot['step_price']) ?>
+                <?php $new_bet = format_price($current_price + (int)$open_lot['step_price']) ?>
                 Мин. ставка <span><?=htmlspecialchars($new_bet) ?></span>
               </div>
             </div>
             <?php if (isset($_SESSION['user_id'])) : ?>
-            <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
-              <p class="lot-item__form-item form__item form__item--invalid">
+            <form class="lot-item__form" action="lot.php?id=<?=$_SESSION['lot_id'] ?>" method="post" autocomplete="off">
+              <p class="lot-item__form-item form__item <?php if($errors_validate): ?> form__item--invalid <?php endif; ?>">
                 <label for="cost">Ваша ставка</label>
-                <input id="cost" type="text" name="cost" placeholder="<?=htmlspecialchars($new_bet) ?>">
-                <span class="form__error">Введите Вашу ставку</span>
+                <input id="cost" type="text" name="cost" value="<?=get_filtered_post_val('cost'); ?>" placeholder="<?=htmlspecialchars($new_bet) ?>">
+                <span class="form__error"><?=$errors_validate['cost'] ?></span>
               </p>
-              <button type="submit" class="button">Сделать ставку</button>
+              <button type="submit" name="submit_bet" class="button">Сделать ставку</button>
             </form>
             <?php endif; ?>
           </div>          
@@ -63,8 +62,7 @@
               <?php endforeach;} ?>                
             </table>
           </div>           
-        </div>
-        
+        </div>        
       </div>
     </section>
   </main>
