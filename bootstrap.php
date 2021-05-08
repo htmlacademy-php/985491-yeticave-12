@@ -12,7 +12,7 @@ $connection = db_connect($config['db']);
 require_once('helpers.php');
 
 $sql_read_categories = "SELECT * FROM categories";
-$categories = db_read($connection, $sql_read_categories);
+$categories = db_read_all($connection, $sql_read_categories);
 
 require_once('check_win.php');
 
