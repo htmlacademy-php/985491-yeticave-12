@@ -55,6 +55,24 @@ function db_read_one_line(mysqli $connection, string $query) : ?array
 }
 
 /**
+ * Читает из БД все, согласно запросу, используя подготовленные выражения
+ *
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param string $query Строка запроса на чтение
+ * @param array $data Массив с данными для вставки на место плэйсхолдеров
+ *
+ * @return array Ассоциативный массив результата запроса
+ */
+function db_read_all_stmt(mysqli $connection, string $query, array $data) : ?array
+{
+    $stmt = db_get_prepare_stmt($connection, $query, $data);
+    check_success_insert_or_read_stmt_execute($connection, $stmt);
+    $result_query = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($result_query, MYSQLI_ASSOC);
+}
+
+/**
  * Читает из БД одну строку, согласно запросу, используя подготовленные выражения
  *
  *
@@ -110,15 +128,53 @@ function db_update(mysqli $connection, string $query) : bool
 }
 
 /**
- * Читает из БД всё, согласно запросу
+ * олучает количество строк (записей), согласно запросу, используя подготовленные выражения
  *
  *
  * @param mysqli $connection Ресурс соединения
  * @param string $query Строка запроса на чтение
+ * @param array $data Массив с данными для вставки на место плэйсхолдеров
  *
- * @return array Ассоциативный массив результата запроса
+ * @return int Количество строк
  */
-//function db_insert(mysqli $connection, string $query) : ?array
-//{
-//
-//}
+function db_num_rows_stmt(mysqli $connection, string $query, array $data) : int
+{
+    $stmt = db_get_prepare_stmt($connection, $query, $data);
+    check_success_insert_or_read_stmt_execute($connection, $stmt);
+    $result_query = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result_query);
+}
+
+/**
+ * Проверяет успешность выполнения записи в БД
+ * Если нет, выдает ошибку
+ *
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param mysqli_stmt $stmt Подготовленное выражение
+ *
+ * @return void
+ */
+function check_success_insert_or_read_stmt_execute(mysqli $connection, mysqli_stmt $stmt) : void
+{
+    if (!mysqli_stmt_execute($stmt)) {
+        $error = mysqli_error($connection);
+        exit("Ошибка MySQL: " . $error);
+    }
+}
+
+/**
+ * Получает id крайней добавленной в БД записи
+ *
+ * @param mysqli $connection Ресурс соединения
+ *
+ * @return int
+ */
+function id_last_inserted_line(mysqli $connection) : int
+{
+    $id_last_insert_line = mysqli_insert_id($connection);
+    if ($id_last_insert_line === 0) {
+        exit('Ошибка получения id последней добавленной записи');
+    }
+    return (int)$id_last_insert_line;
+}

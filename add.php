@@ -1,9 +1,10 @@
 <?php
 require_once('bootstrap.php');
-require_once('user_function.php');
 require_once('functions/template.php');
 require_once('functions/subsidiary.php');
 require_once('functions/validate.php');
+require_once('functions/datetime.php');
+require_once('functions/get_from_get_or_post.php');
 
 $added_lot = [];
 $errors_validate = [];

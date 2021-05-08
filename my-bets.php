@@ -1,6 +1,10 @@
 <?php
-require_once('config.php');
-require_once('user_function.php');
+require_once('bootstrap.php');
+require_once('functions/template.php');
+require_once('functions/subsidiary.php');
+require_once('functions/validate.php');
+require_once('functions/datetime.php');
+require_once('functions/get_from_get_or_post.php');
 
 function get_dt_range_back(string $date_create): string {
   $diff = strtotime("now") - strtotime($date_create);
@@ -12,27 +16,14 @@ function get_dt_range_back(string $date_create): string {
   if ($diff < 86400) {
     return $back_time[0] . get_noun_plural_form($back_time[0], ' час', ' часа', ' часов') . ' назад';
   }
-  
-  return date('d.m.y в H:i', strtotime($date_create));    
+
+  return date('d.m.y в H:i', strtotime($date_create));
 }
 
 $user_id = (int)$_SESSION['user_id'];
 
-$sql_lots_with_my_bets = "SELECT lots.id AS lot_id, lots.date_create AS date_create_lot, lots.name, lots.url_image, lots.start_price, lots.date_end, lots.step_price, lots.winner, categories.name AS name_category, bets.user, bets.date_create AS date_create_bet, bets.price AS price_my_bet, users.contact FROM lots JOIN categories ON lots.category = categories.id JOIN bets ON lots.id = bets.lot LEFT JOIN users ON lots.winner = users.id WHERE (bets.user = ?) ORDER BY bets.date_create DESC";          
-$stmt = mysqli_prepare($connect, $sql_lots_with_my_bets);
-mysqli_stmt_bind_param($stmt, 'i', $user_id);          
-mysqli_stmt_execute($stmt);
-$result_lots_with_my_bets = mysqli_stmt_get_result($stmt);     
-$lots_with_my_bet = mysqli_fetch_all($result_lots_with_my_bets, MYSQLI_ASSOC);  
+$sql_lots_with_my_bets = "SELECT lots.id AS lot_id, lots.date_create AS date_create_lot, lots.name, lots.url_image, lots.start_price, lots.date_end, lots.step_price, lots.winner_id, categories.name AS name_category, bets.user_id, bets.date_create AS date_create_bet, bets.price AS price_my_bet, users.contact FROM lots JOIN categories ON lots.category_id = categories.id JOIN bets ON lots.id = bets.lot_id LEFT JOIN users ON lots.winner_id = users.id WHERE (bets.user_id = ?) ORDER BY bets.date_create DESC";
+$lots_with_my_bet = db_read_all_stmt($connection, $sql_lots_with_my_bets, [$user_id]);
 
-if (!mysqli_stmt_execute($stmt)) { 
-  $error = mysqli_error($connect); 
-  exit("Ошибка MySQL: " . $error);
-}             
-
-$content_page = include_template('my-bets_templates.php', ['categories' => $categories, 'lots_with_my_bet' => $lots_with_my_bet]);
-$page = include_template('layout.php', ['categories' => $categories, 'content_page' => $content_page, 'name_page' => 'Мои ставки']);
-print($page);
-
+print_page('my-bets_templates.php', ['categories' => $categories, 'lots_with_my_bet' => $lots_with_my_bet], 'Мои ставки');
 ?>
-

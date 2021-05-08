@@ -9,7 +9,7 @@
  *
  * @return array Проверенный массив
  */
-function subsidiary_update_price(mysqli $connection, array $products) : array
+function update_price(mysqli $connection, array $products) : array
 {
     for ($i = 0; $i < count($products); $i++) {
         $id = (int)$products[$i]['id'];
@@ -30,8 +30,7 @@ function subsidiary_update_price(mysqli $connection, array $products) : array
 
 /**
  * Проверяет указан ли id лота в $GET или в $SESSION и возвращает id лота
- * Если открыта сессия - прописывает в нее id лота
- *
+ * Если открыта сессия - прописывает в нее id лота *
  *
  *
  * @return int Возвращает id лота
@@ -60,6 +59,7 @@ function init_open_lot() : int
 /**
  * Проверяет не сделаны ли уже ставки на данный лот
  * Если сделаны, указывает её как цену лота
+ *
  *
  * @param array $bet_open_lot Массив со ставками открытого лота
  * @param int $start_price_lot Стартовая цена лота
@@ -108,34 +108,45 @@ function check_sign_in_for_add_account() : void
 }
 
 /**
- * Проверяет успешность выполнения записи в БД
- * Если нет, выдает ошибку
+ * Возвращает номер активной страницы
  *
- * @param mysqli $connection Ресурс соединения
- * @param mysqli_stmt $stmt Подготовленное выражение
  *
- * @return void
+ * @return int
  */
-function check_success_insert_or_read_stmt_execute(mysqli $connection, mysqli_stmt $stmt) : void
+function set_active_page() : int
 {
-    if (!mysqli_stmt_execute($stmt)) {
-        $error = mysqli_error($connection);
-        exit("Ошибка MySQL: " . $error);
+    if (isset($_GET['page'])) {
+        return (int)$_GET['page'];
+    }
+    else {
+        return 1;
     }
 }
 
 /**
- * Получает id крайней добавленной в БД записи
+ * Форматирует цену поданную на вход
+ * Делит на разряды и добавляет символ рубля
  *
- * @param mysqli $connection Ресурс соединения
+ * @param int $price Цена
  *
- * @return int
+ * @return string
  */
-function id_last_inserted_line(mysqli $connection) : int
-{
-    $id_last_insert_line = mysqli_insert_id($connection);
-    if ($id_last_insert_line === 0) {
-        exit('Ошибка получения id последней добавленной записи');
+function format_price(int $price): string {
+    $price = ceil($price);
+    if ($price < 1000) {
+        return $price . ' ₽';
     }
-    return (int)$id_last_insert_line;
+    return number_format($price, 0, ".", " ") . ' ₽';
+}
+
+/**
+ * Форматирует время поданное на вход
+ * Вставляет двоеточие между часами и минутами
+ *
+ * @param array $hours_and_minuts Массив с часами и минутами
+ *
+ * @return string
+ */
+function get_timer_value(array $hours_and_minuts): string {
+    return implode(':', $hours_and_minuts) ?? "";
 }

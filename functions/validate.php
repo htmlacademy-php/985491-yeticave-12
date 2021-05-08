@@ -261,3 +261,74 @@ function validate_sign_in(mysqli $connection): array {
     }
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
+
+/**
+ * Валидирует данные поиска, получая данные из $GET
+ *
+ *
+ * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
+ */
+function validate_search(): array {
+    $rules = [
+        'search' => function() : ?string {
+            return validate_filled_GET('search');
+        }
+    ];
+    $errors_validate = [];
+    //Валидация соответствующих полей и сохранение ошибок (при наличии)
+    foreach ($_POST as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors_validate[$key] = $rule();
+        }
+    }
+    return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
+}
+
+/**
+ * Валидирует формат даты
+ *
+ *
+ * @param string $date Строка даты для проверки
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validation_format_date(string $date): ?string {
+    if (date_create_from_format('Y-m-d', $date) === false) {
+        return 'Дата должна быть введена в формате "ГГГГ-ММ_ДД"';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_POST
+ *
+ *
+ * @param string $name Имя поля в $_POST
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled(string $name): ?string {
+    if (empty($_POST[$name])) {
+        return 'Поле не заполнено ';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @param string $name Имя поля в $_GET
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled_GET(string $name): ?string {
+    if (empty($_GET[$name])) {
+        return 'Поле не заполнено ';
+    }
+
+    return NULL;
+}
