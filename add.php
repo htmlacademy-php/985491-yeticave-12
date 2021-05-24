@@ -15,8 +15,7 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
   $added_lot['author_id'] = $_SESSION['user_id'];
   $added_lot['date_create'] = date('Y-m-d H:i:s');
 
-  //Валидация файла
-  $result_validate_file = download_file();
+  $result_validate_file = download_file($_FILES, NAME_FOLDER_UPLOADS_FILE, FILE_PATH);
   if (stripos($result_validate_file, 'uploads') !== false){
       $added_lot['file_img_lot'] = $result_validate_file;
   }

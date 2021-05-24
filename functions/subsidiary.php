@@ -155,14 +155,17 @@ function get_timer_value(array $hours_and_minuts): string {
  * Загружает файл
  * Возвращает путь к файлу или текст ошибки
  *
+ * @param array $files Массив с данными о файле, на вход подаем массив $_FILES
+ * @param string $name_folder_uploads_file строка имени папки с файлами
+ * @param string $file_path Путь к папке в которой лежит папка с файлами
  *
  * @return string
  */
-function download_file(): string {
-    $errors_validate['file_img_lot'] = validate_file('file_img_lot', NAME_FOLDER_UPLOADS_FILE);
+function download_file(array $files, string $name_folder_uploads_file, string $file_path): string {
+    $errors_validate['file_img_lot'] = validate_file('file_img_lot', $name_folder_uploads_file);
     if ($errors_validate['file_img_lot'] === NULL) {
-        if (move_uploaded_file($_FILES['file_img_lot']['tmp_name'], FILE_PATH . $_FILES['file_img_lot']['name'])) {
-            return NAME_FOLDER_UPLOADS_FILE . $_FILES['file_img_lot']['name'];
+        if (move_uploaded_file($files['file_img_lot']['tmp_name'], $file_path . $files['file_img_lot']['name'])) {
+            return $name_folder_uploads_file . $files['file_img_lot']['name'];
         }
         return 'Ошибка при перемещении файла ';
     }
