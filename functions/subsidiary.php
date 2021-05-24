@@ -150,3 +150,21 @@ function format_price(int $price): string {
 function get_timer_value(array $hours_and_minuts): string {
     return implode(':', $hours_and_minuts) ?? "";
 }
+
+/**
+ * Загружает файл
+ * Возвращает путь к файлу или текст ошибки
+ *
+ *
+ * @return string
+ */
+function download_file(): string {
+    $errors_validate['file_img_lot'] = validate_file('file_img_lot', NAME_FOLDER_UPLOADS_FILE);
+    if ($errors_validate['file_img_lot'] === NULL) {
+        if (move_uploaded_file($_FILES['file_img_lot']['tmp_name'], FILE_PATH . $_FILES['file_img_lot']['name'])) {
+            return NAME_FOLDER_UPLOADS_FILE . $_FILES['file_img_lot']['name'];
+        }
+        return 'Ошибка при перемещении файла ';
+    }
+    return $errors_validate['file_img_lot'];
+}

@@ -16,15 +16,14 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
   $added_lot['date_create'] = date('Y-m-d H:i:s');
 
   //Валидация файла
-  $errors_validate['file_img_lot'] = validate_file('file_img_lot', '/uploads/');
-  if ($errors_validate['file_img_lot'] === NULL) {
-    if (move_uploaded_file($_FILES['file_img_lot']['tmp_name'], FILE_PATH . $_FILES['file_img_lot']['name'])) {
-      $added_lot['file_img_lot'] = NAME_FOLDER_UPLOADS_FILE . $_FILES['file_img_lot']['name'];
-    }
-    else {
-      $errors_validate['file_img_lot'] = 'Ошибка при перемещении файла ';
-    }
+  $result_validate_file = download_file();
+  if (stripos($result_validate_file, 'uploads') !== false){
+      $added_lot['file_img_lot'] = $result_validate_file;
   }
+  else {
+      $errors_validate['file_img_lot'] = $result_validate_file;
+  }
+
   $errors_validate = validate_add_lot_form($categories);
 
   //Если были ошибки валидации - возвращаем на страницу добавления нового лота с показом ошибок
