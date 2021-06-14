@@ -9,8 +9,8 @@
  */
 function validate_bets_form(array $open_lot, int $current_price) : array
 {
-    $rules = [
-        'cost' => function() use ($open_lot, $current_price): ?string {
+    /*$rules = [
+        'cost' => function validate_field_cost(array $open_lot, int $current_price) : ?string{
             $error = validate_filled('cost');
             if ($error) {
                 return $error;
@@ -29,15 +29,17 @@ function validate_bets_form(array $open_lot, int $current_price) : array
 
             return NULL;
         }
-    ];
+    ];*/
 
     //Валидация соответствующих полей и сохранение ошибок (при наличии)
-    foreach ($_POST as $key => $value) {
+    /*foreach ($_POST as $key => $value) {
         if (isset($rules[$key])) {
             $rule = $rules[$key];
             $errors_validate[$key] = $rule();
         }
-    }
+    }*/
+    $errors_validate['cost'] = validate_field_cost($open_lot, $current_price);
+
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
 
@@ -50,7 +52,7 @@ function validate_bets_form(array $open_lot, int $current_price) : array
  */
 function validate_add_lot_form(array $categories) : array
 {
-    $rules = [
+    /*$rules = [
         'lot-name' => function(): ?string {
             return validate_filled('lot-name');
         },
@@ -117,7 +119,14 @@ function validate_add_lot_form(array $categories) : array
             $rule = $rules[$key];
             $errors_validate[$key] = $rule();
         }
-    }
+    }*/
+    $errors_validate['lot-name'] = validate_filled('lot-name');
+    $errors_validate['category'] = validate_filled_field_category($categories);
+    $errors_validate['message'] = validate_filled('message');
+    $errors_validate['lot-rate'] = validate_filled_lot_rate();
+    $errors_validate['lot-step'] = validate_filled_lot_step();
+    $errors_validate['lot-date'] = validate_filled_lot_date();
+
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
 
@@ -125,14 +134,12 @@ function validate_add_lot_form(array $categories) : array
  * Валидирует приложенный к форме файл, получая данные из $FILES
  *
  * @param string $name Имя файла
- * @param string $name_folder_uploads_file Имя папки с изображениями
  *
  * @return ?string Возвращает ошибку (при наличии) или NULL
  */
-function validate_file(string $name, string $name_folder_uploads_file): ?string {
-    if (isset($_FILES[$name]) && !empty($_FILES[$name]['name'])) {
-        $file_name = $_FILES[$name]['tmp_name'];
-        $file_path = sys_get_temp_dir();
+function validate_file(array $files, string $name): ?string {
+    if (isset($files[$name]) && !empty($files[$name]['name'])) {
+        $file_name = $files[$name]['tmp_name'];
 
         $type_file = mime_content_type($file_name);
         if ($type_file === 'image/jpeg' || $type_file === 'image/png' || $type_file === 'image/jpg') {
@@ -153,7 +160,7 @@ function validate_file(string $name, string $name_folder_uploads_file): ?string 
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
 function validate_add_account(mysqli $connection): array {
-    $rules = [
+    /*$rules = [
         'email' => function() use ($connection): ?string {
             $error = validate_filled('email');
             if ($error) {
@@ -195,7 +202,11 @@ function validate_add_account(mysqli $connection): array {
             $rule = $rules[$key];
             $errors_validate[$key] = $rule();
         }
-    }
+    }*/
+    $errors_validate['email'] = validate_field_email_in_add_account($connection);
+    $errors_validate['password'] = validate_filled('password');
+    $errors_validate['name'] = validate_filled('name');
+    $errors_validate['message'] = validate_filled('message');
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
 
@@ -207,7 +218,7 @@ function validate_add_account(mysqli $connection): array {
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
 function validate_sign_in(mysqli $connection): array {
-    $rules = [
+    /*$rules = [
         'email' => function() use ($connection): ?string {
             $error = validate_filled('email');
             if ($error) {
@@ -258,7 +269,10 @@ function validate_sign_in(mysqli $connection): array {
             $rule = $rules[$key];
             $errors_validate[$key] = $rule();
         }
-    }
+    }*/
+    $errors_validate['email'] = validate_field_email_in_sign_in($connection);
+    $errors_validate['password'] = validate_field_password_in_sign_in($connection);
+
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
 
@@ -269,7 +283,7 @@ function validate_sign_in(mysqli $connection): array {
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
 function validate_search(): array {
-    $rules = [
+    /*$rules = [
         'search' => function() : ?string {
             return validate_filled_GET('search');
         }
@@ -281,7 +295,9 @@ function validate_search(): array {
             $rule = $rules[$key];
             $errors_validate[$key] = $rule();
         }
-    }
+    }*/
+    $errors_validate['search'] = validate_filled_GET('search');
+
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
 
@@ -328,6 +344,204 @@ function validate_filled(string $name): ?string {
 function validate_filled_GET(string $name): ?string {
     if (empty($_GET[$name])) {
         return 'Поле не заполнено ';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @param array $open_lot Имя поля в $_GET
+ * @param int $current_price Имя поля в $_GET
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_field_cost(array $open_lot, int $current_price): ?string {
+    $error = validate_filled('cost');
+    if ($error) {
+        return $error;
+    }
+    if (!isset($_SESSION['user_id'])){
+        return 'Необходимо зарегистрироваться';
+    }
+    if ($_POST['cost'] <= 0 || !is_numeric($_POST['cost'])) {
+        return 'Начальная цена должна быть целым числом больше нуля';
+    }
+
+    $min_bet = $current_price + (int)$open_lot['step_price'];
+    if ((int)$_POST['cost'] < $min_bet) {
+        return 'Мин.ставка д.б. не менее ' . $min_bet .  ' ₽';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @param array $categories Имя поля в $_GET
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled_field_category(array $categories): ?string {
+    if (empty($_POST['category'])) {
+        return 'Не выбрана категория';
+    }
+
+    $category_exists = false;
+    foreach ($categories as $item_category) { //проверяется, что введенная категория существует
+        if ($item_category['id'] === $_POST['category']) {
+            $category_exists = true;
+        }
+    }
+    if (!$category_exists) {
+        return 'Выбрана несуществующая категория';
+    }
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled_lot_rate(): ?string {
+    $error = validate_filled('lot-rate');
+    if ($error) {
+        return $error;
+    }
+    if ($_POST['lot-rate'] <= 0 || !is_numeric($_POST['lot-rate']) ) {
+        return 'Начальная цена должна быть числом больше нуля';
+    }
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled_lot_step(): ?string {
+    $error = validate_filled('lot-step');
+    if ($error) {
+        return $error;
+    }
+
+    if (!ctype_digit ($_POST['lot-step']) || $_POST['lot-step'] <= 0) {
+        return 'Шаг ставки должен быть целым числом больше нуля';
+    }
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_filled_lot_date(): ?string {
+    $error = validate_filled('lot-date');
+    if ($error) {
+        return $error;
+    }
+
+    if (validation_format_date($_POST['lot-date'])) {
+        return 'Дата должна быть введена в формате "ГГГГ-ММ-ДД"';
+    }
+
+    if (strtotime($_POST['lot-date']) < (time() + 86400)) {
+        return 'Дата окончания торгов должна быть позже текущего времени минимум на 24 часа';
+    }
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_field_email_in_add_account(mysqli $connection): ?string {
+    $error = validate_filled('email');
+    if ($error) {
+        return $error;
+    }
+
+    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))  {
+        return 'Неверный формат адреса электронной почты. Проверьте введенный email';
+    }
+
+    $sql_read_email_users = "SELECT users.email FROM users WHERE users.email = ?";
+    $stmt = mysqli_prepare($connection, $sql_read_email_users);
+    $get_post_val = get_post_val('email');
+    mysqli_stmt_bind_param($stmt, 's', $get_post_val);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $exist_email = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    if ($exist_email) {
+        return 'Пользователь с таким email уже зарегистрирован';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_field_email_in_sign_in(mysqli $connection): ?string {
+    $error = validate_filled('email');
+    if ($error) {
+        return $error;
+    }
+
+    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))  {
+        return 'Неверный формат адреса электронной почты. Проверьте введенный email';
+    }
+
+    $sql_read_email_users = "SELECT users.email FROM users WHERE users.email = ?";
+    $stmt = mysqli_prepare($connection, $sql_read_email_users);
+    mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $exist_email = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    if (!$exist_email) {
+        return 'Пользователь с таким email еще не зарегистрирован';
+    }
+
+    return NULL;
+}
+
+/**
+ * Валидирует заполненность поля, получая данные из $_GET
+ *
+ *
+ * @return ?string Текст ошибки или NULL
+ */
+function validate_field_password_in_sign_in(mysqli $connection): ?string {
+    $error = validate_filled('password');
+    if ($error) {
+        return $error;
+    }
+
+    $sql_read_password_users = "SELECT users.password FROM users WHERE users.email = ?";
+    $stmt = mysqli_prepare($connection, $sql_read_password_users);
+    mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $exist_email = mysqli_fetch_assoc ($result);
+
+    if (!password_verify(get_post_val('password'), $exist_email['password'])) {
+        return 'Вы ввели неверный пароль';
     }
 
     return NULL;

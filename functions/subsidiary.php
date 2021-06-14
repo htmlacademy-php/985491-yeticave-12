@@ -162,7 +162,7 @@ function get_timer_value(array $hours_and_minuts): string {
  * @return string
  */
 function download_file(array $files, string $name_folder_uploads_file, string $file_path): string {
-    $errors_validate['file_img_lot'] = validate_file('file_img_lot', $name_folder_uploads_file);
+    $errors_validate['file_img_lot'] = validate_file($files, 'file_img_lot');
     if ($errors_validate['file_img_lot'] === NULL) {
         if (move_uploaded_file($files['file_img_lot']['tmp_name'], $file_path . $files['file_img_lot']['name'])) {
             return $name_folder_uploads_file . $files['file_img_lot']['name'];
