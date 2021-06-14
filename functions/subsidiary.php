@@ -43,7 +43,7 @@ function init_open_lot(array $get, array $session) : int
         $id = (int) $get['id'];
 
         if (isset($session['user_id'])) {
-            $session['lot_id'] = $id;
+            $_SESSION['lot_id'] = $id;
         }
     }
     else {
