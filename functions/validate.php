@@ -4,10 +4,12 @@
  *
  * @param array $open_lot Ассоциативный массив с данными открытого лота
  * @param int $current_price Текущая цена лота
+ * @param array $session Данные из массива $_SESSION
+ * @param array $post Данные из массива $_POST
  *
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
-function validate_bets_form(array $open_lot, int $current_price) : array
+function validate_bets_form(array $open_lot, int $current_price, array $session, array $post) : array
 {
     /*$rules = [
         'cost' => function validate_field_cost(array $open_lot, int $current_price) : ?string{
@@ -38,7 +40,7 @@ function validate_bets_form(array $open_lot, int $current_price) : array
             $errors_validate[$key] = $rule();
         }
     }*/
-    $errors_validate['cost'] = validate_field_cost($open_lot, $current_price);
+    $errors_validate['cost'] = validate_field_cost($open_lot, $current_price, $session, $post);
 
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
@@ -47,10 +49,11 @@ function validate_bets_form(array $open_lot, int $current_price) : array
  * Валидирует данные формы добавления лота, получая данные из $POST
  *
  * @param array $categories Ассоциативный массив с категориями
+ * @param array $post Данные из массива $_POST
  *
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
-function validate_add_lot_form(array $categories) : array
+function validate_add_lot_form(array $categories, array $post) : array
 {
     /*$rules = [
         'lot-name' => function(): ?string {
@@ -121,11 +124,11 @@ function validate_add_lot_form(array $categories) : array
         }
     }*/
     $errors_validate['lot-name'] = validate_filled('lot-name');
-    $errors_validate['category'] = validate_filled_field_category($categories);
+    $errors_validate['category'] = validate_field_category($categories, $post);
     $errors_validate['message'] = validate_filled('message');
-    $errors_validate['lot-rate'] = validate_filled_lot_rate();
-    $errors_validate['lot-step'] = validate_filled_lot_step();
-    $errors_validate['lot-date'] = validate_filled_lot_date();
+    $errors_validate['lot-rate'] = validate_field_lot_rate($post);
+    $errors_validate['lot-step'] = validate_field_lot_step($post);
+    $errors_validate['lot-date'] = validate_field_lot_date($post);
 
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
 }
@@ -156,10 +159,11 @@ function validate_file(array $files, string $name): ?string {
  * Валидирует данные формы добавления аккаунта, получая данные из $POST
  *
  * @param mysqli $connection Ресурс соединения
+ * @param array $post Данные из массива $_POST
  *
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
-function validate_add_account(mysqli $connection): array {
+function validate_add_account(mysqli $connection, array $post): array {
     /*$rules = [
         'email' => function() use ($connection): ?string {
             $error = validate_filled('email');
@@ -203,7 +207,7 @@ function validate_add_account(mysqli $connection): array {
             $errors_validate[$key] = $rule();
         }
     }*/
-    $errors_validate['email'] = validate_field_email_in_add_account($connection);
+    $errors_validate['email'] = validate_field_email_in_add_account($connection, $post);
     $errors_validate['password'] = validate_filled('password');
     $errors_validate['name'] = validate_filled('name');
     $errors_validate['message'] = validate_filled('message');
@@ -211,13 +215,14 @@ function validate_add_account(mysqli $connection): array {
 }
 
 /**
- * Валидирует данные формы хода в аккаунт, получая данные из $POST
+ * Валидирует данные формы входа в аккаунт, получая данные из $POST
  *
  * @param mysqli $connection Ресурс соединения
+ * @param array $post Данные из массива $_POST
  *
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
-function validate_sign_in(mysqli $connection): array {
+function validate_sign_in(mysqli $connection, array $post): array {
     /*$rules = [
         'email' => function() use ($connection): ?string {
             $error = validate_filled('email');
@@ -270,7 +275,7 @@ function validate_sign_in(mysqli $connection): array {
             $errors_validate[$key] = $rule();
         }
     }*/
-    $errors_validate['email'] = validate_field_email_in_sign_in($connection);
+    $errors_validate['email'] = validate_field_email_in_sign_in($connection, $post);
     $errors_validate['password'] = validate_field_password_in_sign_in($connection);
 
     return array_filter($errors_validate);  //убираем пустые значения в массиве и возвращаем его
@@ -350,28 +355,30 @@ function validate_filled_GET(string $name): ?string {
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'cost' в форме добавления ставки
  *
  *
- * @param array $open_lot Имя поля в $_GET
- * @param int $current_price Имя поля в $_GET
+ * @param array $open_lot Массив с открытым лотом
+ * @param int $current_price Текущая цена лота
+ * @param array $session Данные из массива $_SESSION
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_field_cost(array $open_lot, int $current_price): ?string {
+function validate_field_cost(array $open_lot, int $current_price, array $session, array $post): ?string {
     $error = validate_filled('cost');
     if ($error) {
         return $error;
     }
-    if (!isset($_SESSION['user_id'])){
+    if (!isset($session['user_id'])){
         return 'Необходимо зарегистрироваться';
     }
-    if ($_POST['cost'] <= 0 || !is_numeric($_POST['cost'])) {
+    if ($post['cost'] <= 0 || !is_numeric($post['cost'])) {
         return 'Начальная цена должна быть целым числом больше нуля';
     }
 
     $min_bet = $current_price + (int)$open_lot['step_price'];
-    if ((int)$_POST['cost'] < $min_bet) {
+    if ((int)$post['cost'] < $min_bet) {
         return 'Мин.ставка д.б. не менее ' . $min_bet .  ' ₽';
     }
 
@@ -379,21 +386,22 @@ function validate_field_cost(array $open_lot, int $current_price): ?string {
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'category' в форме добавления лота
  *
  *
- * @param array $categories Имя поля в $_GET
+ * @param array $categories Массив со списком существующих категорий
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_filled_field_category(array $categories): ?string {
-    if (empty($_POST['category'])) {
+function validate_field_category(array $categories, array $post): ?string {
+    if (empty($post['category'])) {
         return 'Не выбрана категория';
     }
 
     $category_exists = false;
     foreach ($categories as $item_category) { //проверяется, что введенная категория существует
-        if ($item_category['id'] === $_POST['category']) {
+        if ($item_category['id'] === $post['category']) {
             $category_exists = true;
         }
     }
@@ -404,75 +412,79 @@ function validate_filled_field_category(array $categories): ?string {
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'lot-rate' в форме добавления лота
  *
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_filled_lot_rate(): ?string {
+function validate_field_lot_rate(array $post): ?string {
     $error = validate_filled('lot-rate');
     if ($error) {
         return $error;
     }
-    if ($_POST['lot-rate'] <= 0 || !is_numeric($_POST['lot-rate']) ) {
+    if ($post['lot-rate'] <= 0 || !is_numeric($post['lot-rate']) ) {
         return 'Начальная цена должна быть числом больше нуля';
     }
     return NULL;
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'lot-step' в форме добавления лота
  *
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_filled_lot_step(): ?string {
+function validate_field_lot_step(array $post): ?string {
     $error = validate_filled('lot-step');
     if ($error) {
         return $error;
     }
 
-    if (!ctype_digit ($_POST['lot-step']) || $_POST['lot-step'] <= 0) {
+    if (!ctype_digit ($post['lot-step']) || $post['lot-step'] <= 0) {
         return 'Шаг ставки должен быть целым числом больше нуля';
     }
     return NULL;
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'lot-date' в форме добавления лота
  *
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_filled_lot_date(): ?string {
+function validate_field_lot_date(array $post): ?string {
     $error = validate_filled('lot-date');
     if ($error) {
         return $error;
     }
 
-    if (validation_format_date($_POST['lot-date'])) {
+    if (validation_format_date($post['lot-date'])) {
         return 'Дата должна быть введена в формате "ГГГГ-ММ-ДД"';
     }
 
-    if (strtotime($_POST['lot-date']) < (time() + 86400)) {
+    if (strtotime($post['lot-date']) < (time() + 86400)) {
         return 'Дата окончания торгов должна быть позже текущего времени минимум на 24 часа';
     }
     return NULL;
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'email' в форме добавления аккаунта
  *
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_field_email_in_add_account(mysqli $connection): ?string {
+function validate_field_email_in_add_account(mysqli $connection, array $post): ?string {
     $error = validate_filled('email');
     if ($error) {
         return $error;
     }
 
-    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))  {
+    if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL))  {
         return 'Неверный формат адреса электронной почты. Проверьте введенный email';
     }
 
@@ -492,18 +504,19 @@ function validate_field_email_in_add_account(mysqli $connection): ?string {
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'email' в форме входа в аккаунт
  *
+ * @param array $post Данные из массива $_POST
  *
  * @return ?string Текст ошибки или NULL
  */
-function validate_field_email_in_sign_in(mysqli $connection): ?string {
+function validate_field_email_in_sign_in(mysqli $connection, array $post): ?string {
     $error = validate_filled('email');
     if ($error) {
         return $error;
     }
 
-    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))  {
+    if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL))  {
         return 'Неверный формат адреса электронной почты. Проверьте введенный email';
     }
 
@@ -522,7 +535,7 @@ function validate_field_email_in_sign_in(mysqli $connection): ?string {
 }
 
 /**
- * Валидирует заполненность поля, получая данные из $_GET
+ * Валидирует поле 'password' в форме входа в аккаунт
  *
  *
  * @return ?string Текст ошибки или NULL

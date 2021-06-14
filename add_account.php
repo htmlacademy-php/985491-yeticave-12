@@ -8,13 +8,13 @@ require_once('functions/get_from_get_or_post.php');
 
 $errors_validate = [];
 
-check_sign_in_for_add_account();
+check_sign_in_for_add_account($_SESSION);
 
 if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена
   $date_create = date('Y-m-d H:i:s');
   $hash_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-  $errors_validate = validate_add_account($connection);
+  $errors_validate = validate_add_account($connection, $_POST);
 
   //Если были ошибки валидации - возвращаем на страницу добавления нового лота с показом ошибок
   if ($errors_validate) {

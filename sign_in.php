@@ -9,7 +9,7 @@ require_once('functions/get_from_get_or_post.php');
 $errors_validate = [];
 
 if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена
-  $errors_validate = validate_sign_in($connection);
+  $errors_validate = validate_sign_in($connection, $_POST);
 
   //Если были ошибки валидации - возвращаем на страницу добавления нового лота с показом ошибок
   if ($errors_validate) {

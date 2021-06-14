@@ -32,21 +32,23 @@ function update_price(mysqli $connection, array $products) : array
  * Проверяет указан ли id лота в $GET или в $SESSION и возвращает id лота
  * Если открыта сессия - прописывает в нее id лота *
  *
+ * @param array $get Данные из массива $_GET
+ * @param array $session Данные из массива $_SESSION
  *
  * @return int Возвращает id лота
  */
-function init_open_lot() : int
+function init_open_lot(array $get, array $session) : int
 {
-    if (isset($_GET['id'])) {
-        $id = (int) $_GET['id'];
+    if (isset($get['id'])) {
+        $id = (int) $get['id'];
 
-        if (isset($_SESSION['user_id'])) {
-            $_SESSION['lot_id'] = $id;
+        if (isset($session['user_id'])) {
+            $session['lot_id'] = $id;
         }
     }
     else {
-        if (isset($_SESSION['lot_id'])) {
-            $id = (int)$_SESSION['lot_id'];
+        if (isset($session['lot_id'])) {
+            $id = (int)$session['lot_id'];
         }
         else {
             http_response_code(404);
@@ -81,12 +83,13 @@ function check_price_lot(array $bet_open_lot, int $start_price_lot) : int
  * Проверяет выполнен ли вход в учетную запись (для операции добавления нового лота)
  * Если нет, выдает ошибку
  *
+ * @param array $session Данные из массива $_SESSION
  *
  * @return void
  */
-function check_sign_in_for_add_lot() : void
+function check_sign_in_for_add_lot(array $session) : void
 {
-    if (!isset($_SESSION['user_id'])) {
+    if (!isset($session['user_id'])) {
         http_response_code(403);
         exit("Для добавления лота необходимо зарегистрироваться на сайте.");
     }
@@ -96,12 +99,13 @@ function check_sign_in_for_add_lot() : void
  * Проверяет, не выполнен ли уже вход в учетную запись (для операции добавления нового аккаунта)
  * Если да - выдает ошибку
  *
+ * @param array $session Данные из массива $_SESSION
  *
  * @return void
  */
-function check_sign_in_for_add_account() : void
+function check_sign_in_for_add_account(array $session) : void
 {
-    if (isset($_SESSION['user_id'])) {
+    if (isset($session['user_id'])) {
         http_response_code(403);
         exit("Вы уже зарегистрированы.");
     }
@@ -110,13 +114,14 @@ function check_sign_in_for_add_account() : void
 /**
  * Возвращает номер активной страницы
  *
+ * @param array $get Данные из массива $_GET
  *
  * @return int
  */
-function set_active_page() : int
+function set_active_page(array $get) : int
 {
-    if (isset($_GET['page'])) {
-        return (int)$_GET['page'];
+    if (isset($get['page'])) {
+        return (int)$get['page'];
     }
     else {
         return 1;

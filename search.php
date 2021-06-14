@@ -9,7 +9,7 @@ require_once('functions/get_from_get_or_post.php');
 $errors_validate = [];
 define('DEFAULT_LOTS_ON_PAGE', 9);
 $number_lots_on_page = DEFAULT_LOTS_ON_PAGE;  //Вынужден был оставить переменную, т.к. функция mysqli_stmt_bind_param принимает только переменные, Fatal error иначе выдает
-$active_page = set_active_page();
+$active_page = set_active_page($_GET);
 
 if (isset($_GET['find'])) {  //Если есть такое поле в GET, значит форма отправлена
   $errors_validate = validate_search();
@@ -24,7 +24,7 @@ if (isset($_GET['find'])) {  //Если есть такое поле в GET, з�
     $sql_number_lots_searched = "SELECT lots.id, lots.date_create, lots.name, lots.description FROM lots WHERE (MATCH(lots.name, lots.description) AGAINST(?)) AND (lots.date_end > NOW()) ORDER BY lots.date_create DESC";
     $number_lots_searched = db_num_rows_stmt($connection, $sql_number_lots_searched, [$search_query]);
 
-    $active_page = set_active_page();
+    $active_page = set_active_page($_GET);
 
     //Расчет параметров для выборки лотов
     $offset = ($active_page - 1) * DEFAULT_LOTS_ON_PAGE;

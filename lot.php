@@ -20,7 +20,7 @@ function get_dt_range_back(string $date_create): string {
     return date('d.m.Y в H:i', strtotime($date_create));
 }
 
-$id = init_open_lot();
+$id = init_open_lot($_GET, $_SESSION);
 
 $sql_read_lot = "SELECT lots.date_create, lots.name, lots.description, lots.url_image, lots.start_price, lots.date_end, lots.step_price, categories.name AS name_category FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.id ='" . $id ."'";
 $open_lot = db_read_one_line($connection, $sql_read_lot);
@@ -35,7 +35,7 @@ $bet_open_lot = db_read_all($connection, $sql_read_bet);
 $current_price = check_price_lot($bet_open_lot, (int)$open_lot['start_price']);
 
 if (isset($_POST['submit_bet'])) {  //Если есть такое поле в POST, значит форма отправлена
-    $errors_validate = validate_bets_form($open_lot, $current_price);
+    $errors_validate = validate_bets_form($open_lot, $current_price, $_SESSION, $_POST);
 
 //Если были ошибки валидации - возвращаем на страницу добавления новой ставки с показом ошибок
   if (!$errors_validate) {

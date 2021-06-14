@@ -9,7 +9,7 @@ require_once('functions/get_from_get_or_post.php');
 $added_lot = [];
 $errors_validate = [];
 
-check_sign_in_for_add_lot();
+check_sign_in_for_add_lot($_SESSION);
 
 if (isset($_POST['submit'])) {  //Если есть такое поле в POST, значит форма отправлена
   $added_lot['author_id'] = $_SESSION['user_id'];
@@ -23,7 +23,7 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
       $errors_validate['file_img_lot'] = $result_validate_file;
   }
 
-  $errors_validate = validate_add_lot_form($categories);
+  $errors_validate = validate_add_lot_form($categories, $_POST);
 
   //Если были ошибки валидации - возвращаем на страницу добавления нового лота с показом ошибок
   if ($errors_validate) {
