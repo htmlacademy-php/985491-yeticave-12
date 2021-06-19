@@ -176,3 +176,24 @@ function download_file(array $files, string $name_folder_uploads_file, string $f
     }
     return $errors_validate['file_img_lot'];
 }
+
+/**
+ * Загружает файл
+ * Возвращает путь к файлу или текст ошибки
+ *
+ * @param mysqli $connection Ресурс соединения с БД
+ * @param array $lot_data Данные по лоту полученные из БД
+ *
+ *
+ * @return int id добавленного лота
+ */
+function add_lot(mysqli $connection, array $lot_data = []): int {
+    $sql_insert_lot = 'INSERT INTO lots (date_create, name, description, url_image, start_price, date_end, step_price, author_id, category_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    db_insert_one_line_stmt($connection, $sql_insert_lot, [$lot_data['date_create'], $lot_data['lot-name'],
+        $lot_data['message'], $lot_data['file_img_lot'], $lot_data['lot-rate'], $lot_data['lot-date'], $lot_data['lot-step'], $lot_data['author_id'], $lot_data['category']]);
+
+    return id_last_inserted_line($connection);
+}
+
+
