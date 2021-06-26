@@ -6,6 +6,9 @@ return [
         'password' => 'mysql',
         'database' => 'yeticave'
     ],
+    'time' => [
+        'timezone' => 'Asia/Yekaterinburg'
+    ],
     'mailer' => [
         'host' => '',
         'username' => '',

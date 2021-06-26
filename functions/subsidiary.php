@@ -178,8 +178,8 @@ function download_file(array $files, string $name_folder_uploads_file, string $f
 }
 
 /**
- * Загружает файл
- * Возвращает путь к файлу или текст ошибки
+ * Добавляет лот в БД
+ * Возвращает id добавленного лота
  *
  * @param mysqli $connection Ресурс соединения с БД
  * @param array $lot_data Данные по лоту полученные из БД
@@ -196,4 +196,15 @@ function add_lot(mysqli $connection, array $lot_data = []): int {
     return id_last_inserted_line($connection);
 }
 
+/**
+ * Получает из БД все категории
+ *
+ * @param mysqli $connection Ресурс соединения с БД *
+ *
+ * @return array Все категории из БД
+ */
+function get_all_category(mysqli $connection): array {
+    $sql_read_categories = "SELECT * FROM categories";
+    return db_read_all($connection, $sql_read_categories);
+}
 

@@ -33,15 +33,6 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
     //Если ошибок не было - добавляем ноый лот в БД
     $id_last_insert_lot = add_lot($connection, ['date_create' => $added_lot['date_create'], 'lot-name' => get_post_val('lot-name'), 'message' => get_post_val('message'), 'file_img_lot' => $added_lot['file_img_lot'], 'lot-rate' => get_post_val('lot-rate'), 'lot-date' => get_post_val('lot-date'), 'lot-step' => get_post_val('lot-step'), 'author_id' => $added_lot['author_id'], 'category' => get_post_val('category')]);
 
-    //Получаем из БД данные по только что добавленному лоту
-    $sql_read_lot = "SELECT lots.date_create, lots.name, lots.description, lots.url_image, lots.start_price, lots.date_end, lots.step_price, categories.name AS name_category FROM lots JOIN categories ON lots.category_id = categories.id WHERE lots.id ='" . $id_last_insert_lot ."'";
-    $open_lot = db_read_one_line($connection, $sql_read_lot);
-
-    if ($open_lot===NULL) {
-      http_response_code(404);
-      exit("Страница с id =" . $id_last_insert_lot . " не найдена.");
-    }
-
     //Перенаправляем на страницу с только что добавленным лотом
     header('Location: lot.php?id=' . $id_last_insert_lot);
   }
