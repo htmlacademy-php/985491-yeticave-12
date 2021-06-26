@@ -208,3 +208,54 @@ function get_all_category(mysqli $connection): array {
     return db_read_all($connection, $sql_read_categories);
 }
 
+/**
+ * Получает из БД перечень лотов с окончившимя сроком размещения и не имеющие победителя
+ *
+ * @param mysqli $connection Ресурс соединения с БД *
+ *
+ * @return array Вышеозначенные лоты
+ */
+function get_all_lot_ended_and_without_winner(mysqli $connection): array {
+    $sql_read_lot_ended_and_without_winner = "SELECT lots.id, lots.author_id FROM lots WHERE (lots.date_end <= NOW()) AND (lots.winner_id IS NULL)";
+    return db_read_all($connection, $sql_read_lot_ended_and_without_winner);
+}
+
+/**
+ * Получает из БД все ставки по id лота
+ *
+ * @param mysqli $connection Ресурс соединения с БД
+ * @param int $id_lot id лота по которому получаем ставки
+ *
+ * @return array Вышеозначенные лоты
+ */
+function get_all_bets_for_lot(mysqli $connection, int $id_lot): array {
+    $sql_read_bets_for_lot = "SELECT bets.id, bets.user_id FROM bets WHERE bets.lot_id = '$id_lot' ORDER BY bets.date_create DESC";
+    return db_read_all($connection, $sql_read_bets_for_lot);
+}
+
+/**
+ * Записывает в БД указанному лоту победителя по нему
+ *
+ * @param mysqli $connection Ресурс соединения с БД
+ * @param int $id_lot id лота по которому устанавливаем победителя
+ * @param int $id_winner id победителя
+ *
+ * @return void
+ */
+function set_winner_for_lot(mysqli $connection, int $id_lot, int $id_winner) {
+    $sql_write_winner_in_lot = "UPDATE lots SET winner_id = '$id_winner' WHERE id = '$id_lot'";
+    db_update($connection, $sql_write_winner_in_lot);
+}
+
+/**
+ * Записывает в БД указанному лоту победителя по нему
+ *
+ * @param mysqli $connection Ресурс соединения с БД
+ * @param int $user_id id текущего пользователя
+ *
+ * @return array Вышеозначенные лоты
+ */
+function get_all_lots_with_my_bets(mysqli $connection, int $user_id): array {
+    $sql_lots_with_my_bets = "SELECT lots.id AS lot_id, lots.date_create AS date_create_lot, lots.name, lots.url_image, lots.start_price, lots.date_end, lots.step_price, lots.winner_id, categories.name AS name_category, bets.user_id, bets.date_create AS date_create_bet, bets.price AS price_my_bet, users.contact FROM lots JOIN categories ON lots.category_id = categories.id JOIN bets ON lots.id = bets.lot_id LEFT JOIN users ON lots.winner_id = users.id WHERE (bets.user_id = ?) ORDER BY bets.date_create DESC";
+    return db_read_all_stmt($connection, $sql_lots_with_my_bets, [$user_id]);
+}
