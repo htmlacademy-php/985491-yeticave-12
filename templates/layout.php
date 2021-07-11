@@ -16,7 +16,7 @@
         <a class="main-header__logo" href="index.php">
             <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
-        <form class="main-header__search" method="get" action="search.php" autocomplete="off">            
+        <form class="main-header__search" method="get" action="search.php" autocomplete="off">
             <input type="search" name="search" placeholder="Поиск лота"  value="<?=get_filtered_get_val('search'); ?>">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
@@ -28,7 +28,7 @@
             <?php if (isset($_SESSION['user_id'])) : ?>
             <div class="user-menu__logged">
             <p><?=htmlspecialchars($_SESSION['user_name']); ?></p>
-            <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
+            <a class="user-menu__bets" href="my-bets.php">Мои ставки</a>
             <a class="user-menu__logout" href="logout.php">Выход</a>
             </div>
             <?php else: ?>
@@ -46,7 +46,6 @@
     </div>
 </header>
 
-
     <?=$content_page; ?>
 
 </div>
@@ -54,7 +53,6 @@
 <footer class="main-footer">
     <nav class="nav">
         <ul class="nav__list container">
-            <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category): ?>
             <li class="nav__item">
                 <a href="pages/all-lots.html"><?=htmlspecialchars($category['name']) ?></a>
