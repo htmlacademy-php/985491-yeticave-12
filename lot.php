@@ -59,6 +59,8 @@ if (isset($_POST['submit_bet'])) {  //Если есть такое поле в P
   }
 }
 
+if (!isset($errors_validate)) {$errors_validate = [];}
+
 print_page('content_lot.php', ['open_lot' => $open_lot, 'categories' => $categories, 'errors_validate' =>
     $errors_validate, 'bet_open_lot' => $bet_open_lot, 'current_price' =>
     $current_price], $open_lot['name']);
