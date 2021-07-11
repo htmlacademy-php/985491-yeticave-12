@@ -33,5 +33,5 @@ function get_filtered_post_val(string $name): string {
  */
 function get_filtered_get_val(string $name): string {
 
-    return htmlspecialchars(isset($_GET[$name])) ?? "";
-}/*<br /><b>Notice</b>:  Undefined index: search in <b>E:\Download\OpenServer\domains\985491-yeticave-12\functions\get_from_get_or_post.php</b> on line <b>35</b><br />*/
+    return htmlspecialchars($_GET[$name] ?? "");
+}

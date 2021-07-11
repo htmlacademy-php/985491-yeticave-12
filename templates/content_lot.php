@@ -40,11 +40,12 @@
             </div>
             <?php if (isset($_SESSION['user_id'])) : ?>
             <form class="lot-item__form" action="lot.php?id=<?=$_SESSION['lot_id'] ?>" method="post" autocomplete="off">
-              <p class="lot-item__form-item form__item <?php if(isset($errors_validate)): ?> form__item--invalid <?php
+              <p class="lot-item__form-item form__item <?php if(count($errors_validate) > 0): ?> form__item--invalid
+              <?php
               endif; ?>">
                 <label for="cost">Ваша ставка</label>
                 <input id="cost" type="text" name="cost" value="<?=get_filtered_post_val('cost'); ?>" placeholder="<?=htmlspecialchars($new_bet) ?>">
-                <span class="form__error"><?=$errors_validate['cost'] ?? "" ?></span>
+                <span class="form__error"><?php echo ($errors_validate['cost'] ?? "") ?></span>
               </p>
               <button type="submit" name="submit_bet" class="button">Сделать ставку</button>
             </form>

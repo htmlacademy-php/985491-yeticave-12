@@ -40,7 +40,6 @@ if (isset($_POST['submit_bet'])) {  //Если есть такое поле в P
 //Если были ошибки валидации - возвращаем на страницу добавления новой ставки с показом ошибок
   if (!$errors_validate) {
     //Если ошибок не было - добавляем новую ставку в БД
-      $errors_validate['error'] = "no errors";
     $price_bet = $current_price + (int)$open_lot['step_price'];
     if ($_POST['cost'] > $price_bet) {
         $price_bet = (int)get_post_val('cost');
@@ -61,6 +60,6 @@ if (isset($_POST['submit_bet'])) {  //Если есть такое поле в P
 }
 
 print_page('content_lot.php', ['open_lot' => $open_lot, 'categories' => $categories, 'errors_validate' =>
-    $errors_validate ?? FALSE, 'bet_open_lot' => $bet_open_lot, 'current_price' =>
+    $errors_validate, 'bet_open_lot' => $bet_open_lot, 'current_price' =>
     $current_price], $open_lot['name']);
 
