@@ -17,7 +17,8 @@ if (isset($_POST['submit'])) {  //Если есть такое поле в POST,
   }
   else {
     $sql_read_user_id = "SELECT * FROM users WHERE users.email = ?";
-    $user = db_read_one_line_stmt($connection, $sql_read_user_id, [get_post_val('email')]);
+    $email = get_post_val('email');
+    $user = db_read_one_line_stmt($connection, $sql_read_user_id, [$email]);
 
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_name'] = $user['name'];

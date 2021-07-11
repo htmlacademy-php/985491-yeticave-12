@@ -5,7 +5,7 @@
             <li class="nav__item">
                 <a href="pages/all-lots.html"><?=htmlspecialchars($category['name']) ?></a>
             </li>
-        <?php endforeach; ?> 
+        <?php endforeach; ?>
       </ul>
     </nav>
     <section class="rates container">
@@ -13,7 +13,8 @@
       <table class="rates__list">
         <?php foreach ($lots_with_my_bet as $lot_with_my_bet): ?>
           <?php $hours_and_minuts_with_seconds = get_dt_range_with_seconds($lot_with_my_bet['date_end']);
-            
+
+            if (!isset($lot_with_my_bet['winner'])) {$lot_with_my_bet['winner'] = 0;}
             if ($lot_with_my_bet['winner'] == $_SESSION['user_id']) {
               //$class_item = "rates__item--win";
               $class_timer = "timer--win";
@@ -22,16 +23,16 @@
             elseif ($lot_with_my_bet['winner'] != $_SESSION['user_id'] && $hours_and_minuts_with_seconds[2] < 1) {
               $class_item = "rates__item--end";
               $class_timer = "timer--end";
-              $text_timer = "Торги окончены";              
+              $text_timer = "Торги окончены";
             }
             elseif ($hours_and_minuts_with_seconds[0] < 1) {
               $class_timer = "timer--finishing";
-              $text_timer = get_timer_value($hours_and_minuts_with_seconds);              
-            } 
+              $text_timer = get_timer_value($hours_and_minuts_with_seconds);
+            }
             else {
               $class_timer = "";
               $text_timer = get_timer_value($hours_and_minuts_with_seconds);
-            }                       
+            }
             ?>
 
           <tr class="rates__item <?=$class_item ?>">
@@ -42,13 +43,13 @@
               <div>
               <h3 class="rates__title"><a href="/lot.php?id=<?=$lot_with_my_bet['lot_id'] ?>"><?=htmlspecialchars($lot_with_my_bet['name']) ?></a></h3>
 
-              
+
               <?php if ($text_timer == "Ставка выиграла" || $text_timer == "Торги окончены") : ?> <p> <?=htmlspecialchars($lot_with_my_bet['contact']) ?> </p><?php endif; ?>
               </div>
             </td>
             <td class="rates__category">
               <?=htmlspecialchars($lot_with_my_bet['name_category']) ?>
-            </td>        
+            </td>
             <td class="rates__timer">
               <div class="timer <?=$class_timer ?>"><?=$text_timer ?></div>
             </td>
@@ -60,7 +61,7 @@
               <!-- 5 минут назад -->
             </td>
           </tr>
-        <?php endforeach; ?>         
+        <?php endforeach; ?>
       </table>
     </section>
   </main>

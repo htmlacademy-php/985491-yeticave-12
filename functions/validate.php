@@ -223,58 +223,6 @@ function validate_add_account(mysqli $connection, array $post): array {
  * @return array Возвращает массив с ошибками, или пустой массив, если ошибок нет
  */
 function validate_sign_in(mysqli $connection, array $post): array {
-    /*$rules = [
-        'email' => function() use ($connection): ?string {
-            $error = validate_filled('email');
-            if ($error) {
-                return $error;
-            }
-
-            if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))  {
-                return 'Неверный формат адреса электронной почты. Проверьте введенный email';
-            }
-
-            $sql_read_email_users = "SELECT users.email FROM users WHERE users.email = ?";
-            $stmt = mysqli_prepare($connection, $sql_read_email_users);
-            mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            $exist_email = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-            if (!$exist_email) {
-                return 'Пользователь с таким email еще не зарегистрирован';
-            }
-
-            return NULL;
-        },
-        'password' => function() use ($connection): ?string {
-            $error = validate_filled('password');
-            if ($error) {
-                return $error;
-            }
-
-            $sql_read_password_users = "SELECT users.password FROM users WHERE users.email = ?";
-            $stmt = mysqli_prepare($connection, $sql_read_password_users);
-            mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            $exist_email = mysqli_fetch_assoc ($result);
-
-            if (!password_verify(get_post_val('password'), $exist_email['password'])) {
-                return 'Вы ввели неверный пароль';
-            }
-
-            return NULL;
-        }
-    ];
-
-    //Валидация соответствующих полей и сохранение ошибок (при наличии)
-    foreach ($_POST as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors_validate[$key] = $rule();
-        }
-    }*/
     $errors_validate['email'] = validate_field_email_in_sign_in($connection, $post);
     $errors_validate['password'] = validate_field_password_in_sign_in($connection);
 
@@ -490,8 +438,8 @@ function validate_field_email_in_add_account(mysqli $connection, array $post): ?
 
     $sql_read_email_users = "SELECT users.email FROM users WHERE users.email = ?";
     $stmt = mysqli_prepare($connection, $sql_read_email_users);
-    $get_post_val = get_post_val('email');
-    mysqli_stmt_bind_param($stmt, 's', $get_post_val);
+    $email = get_post_val('email');
+    mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $exist_email = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -522,7 +470,9 @@ function validate_field_email_in_sign_in(mysqli $connection, array $post): ?stri
 
     $sql_read_email_users = "SELECT users.email FROM users WHERE users.email = ?";
     $stmt = mysqli_prepare($connection, $sql_read_email_users);
-    mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
+
+    $email = get_post_val('email');
+    mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $exist_email = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -548,7 +498,8 @@ function validate_field_password_in_sign_in(mysqli $connection): ?string {
 
     $sql_read_password_users = "SELECT users.password FROM users WHERE users.email = ?";
     $stmt = mysqli_prepare($connection, $sql_read_password_users);
-    mysqli_stmt_bind_param($stmt, 's', get_post_val('email'));
+    $email = get_post_val('email');
+    mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $exist_email = mysqli_fetch_assoc ($result);

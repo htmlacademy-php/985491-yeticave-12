@@ -12,6 +12,6 @@ $products = db_read_all($connection, $sql_read_open_lots);
 $products = update_price($connection, $products);
 
 print_page('main.php', ['products' => $products, 'categories' => $categories], 'Главная');
-?>
+
 
 

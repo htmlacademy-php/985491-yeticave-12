@@ -20,7 +20,7 @@ function get_post_val(string $name): string {
  * @return string
  */
 function get_filtered_post_val(string $name): string {
-    return htmlspecialchars(get_post_val($name)) ?? "";
+    return htmlspecialchars(get_post_val($name));
 }
 
 /**
@@ -32,5 +32,6 @@ function get_filtered_post_val(string $name): string {
  * @return string
  */
 function get_filtered_get_val(string $name): string {
-    return htmlspecialchars($_GET[$name]) ?? "";
-}
+
+    return htmlspecialchars(isset($_GET[$name])) ?? "";
+}/*<br /><b>Notice</b>:  Undefined index: search in <b>E:\Download\OpenServer\domains\985491-yeticave-12\functions\get_from_get_or_post.php</b> on line <b>35</b><br />*/

@@ -21,8 +21,10 @@ function update_price(mysqli $connection, array $products) : array
             continue;
         }
 
-        if ((int)$bet_open_lot[0]['price'] > $products['price']) {
-            $products[$i]['price'] = $bet_open_lot[0]['price'];
+        if (isset($bet_open_lot[0]['price'])) {
+            //if ((int)$bet_open_lot[0]['price'] > $products['price']) {
+                $products[$i]['price'] = $bet_open_lot[0]['price'];
+            //}
         }
     }
     return $products;
